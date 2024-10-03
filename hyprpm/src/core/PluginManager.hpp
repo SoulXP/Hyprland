@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 enum eHeadersErrors {
     HEADERS_OK = 0,
@@ -43,7 +44,7 @@ class CPluginManager {
 
     eHeadersErrors         headersValid();
     bool                   updateHeaders(bool force = false);
-    bool                   updatePlugins(bool forceUpdateAll);
+    bool                   updatePlugins(const std::vector<std::string>& names, bool forceUpdateAll);
 
     void                   listAllPlugins();
 

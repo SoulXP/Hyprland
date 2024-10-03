@@ -103,7 +103,8 @@ int               main(int argc, char** argv, char** envp) {
             auto       GLOBALSTATE      = DataState::getGlobalState();
             const auto COMPILEDOUTDATED = HLVER.hash != GLOBALSTATE.headersHashCompiled;
 
-            bool       ret1 = g_pPluginManager->updatePlugins(!headersValid || force || COMPILEDOUTDATED);
+            std::vector<std::string> names{command.begin() + (command.size() > 0 ? 1 : 0), command.end()};
+            bool ret1 = g_pPluginManager->updatePlugins(names, !headersValid || force || COMPILEDOUTDATED);
 
             if (!ret1)
                 return 1;

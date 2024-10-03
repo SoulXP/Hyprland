@@ -11,6 +11,8 @@
 #include <fstream>
 #include <algorithm>
 #include <format>
+#include <ranges>
+#include <set>
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -555,13 +557,35 @@ bool CPluginManager::updateHeaders(bool force) {
     return true;
 }
 
-bool CPluginManager::updatePlugins(bool forceUpdateAll) {
+bool CPluginManager::updatePlugins(const std::vector<std::string>& names, bool forceUpdateAll) {
     if (headersValid() != HEADERS_OK) {
         std::cout << "\n" << std::string{Colors::RED} + "✖" + Colors::RESET + " headers are not up-to-date, please run hyprpm update.\n";
         return false;
     }
 
-    const auto REPOS = DataState::getAllRepositories();
+    std::set<std::string_view> NOT_FOUND{names.begin(), names.end()};
+    const auto REPOS = DataState::getAllRepositories()
+        | std::views::filter([&names, &NOT_FOUND](const SPluginRepository& repo) {
+            std::string_view value{};
+
+            for (auto const& name : names) {
+                if (name == repo.name) { value = name; break; }
+                for (auto const& plugin : repo.plugins) {
+                    if (name == plugin.name) { value = plugin.name; break; }
+                }
+            }
+
+            if (value != "") NOT_FOUND.erase(value);
+
+            return value != "" || names.size() == 0;
+        })
+        | std::ranges::to<std::vector>();
+
+
+    for (auto const& [i, missing] : NOT_FOUND | std::views::enumerate) {
+        std::cout << ((i == 0) ? "\n" : "")
+            << std::string{Colors::YELLOW} + "!" + Colors::RESET + " Repo \"" << missing << "\" is not installed.\n";
+    }
 
     if (REPOS.size() < 1) {
         std::cout << "\n" << std::string{Colors::RED} + "✖" + Colors::RESET + " No repos to update.\n";

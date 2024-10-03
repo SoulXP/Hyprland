@@ -11,22 +11,23 @@
 
 const std::string HELP = R"#(┏ hyprpm, a Hyprland Plugin Manager
 ┃
-┣ add [url] [git rev]    → Install a new plugin repository from git. Git revision
-┃                          is optional, when set, commit locks are ignored.
-┣ remove [url/name]      → Remove an installed plugin repository
-┣ enable [name]          → Enable a plugin
-┣ disable [name]         → Disable a plugin
-┣ update                 → Check and update all plugins if needed
-┣ reload                 → Reload hyprpm state. Ensure all enabled plugins are loaded.
-┣ list                   → List all installed plugins
+┣ add <url> [git rev]              → Install a new plugin repository from git. Git revision
+┃                                    is optional, when set, commit locks are ignored.
+┣ remove <url/name>                → Remove an installed plugin repository
+┣ enable <name>                    → Enable a plugin
+┣ disable <name>                   → Disable a plugin
+┣ update [<name/repository> [...]] → Check and update all/specified plugins. If no
+                                     plugins are specified, then all plugins are checked.
+┣ reload                           → Reload hyprpm state. Ensure all enabled plugins are loaded.
+┣ list                             → List all installed plugins
 ┃
 ┣ Flags:
 ┃
-┣ --notify       | -n    → Send a hyprland notification for important events (e.g. load fail)
-┣ --help         | -h    → Show this menu
-┣ --verbose      | -v    → Enable too much logging
-┣ --force        | -f    → Force an operation ignoring checks (e.g. update -f)
-┣ --no-shallow   | -s    → Disable shallow cloning of Hyprland sources
+┣ --notify       | -n              → Send a hyprland notification for important events (e.g. load fail)
+┣ --help         | -h              → Show this menu
+┣ --verbose      | -v              → Enable too much logging
+┣ --force        | -f              → Force an operation ignoring checks (e.g. update -f)
+┣ --no-shallow   | -s              → Disable shallow cloning of Hyprland sources
 ┗
 )#";
 

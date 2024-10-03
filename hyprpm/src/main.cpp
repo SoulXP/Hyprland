@@ -99,12 +99,12 @@ int               main(int argc, char** argv, char** envp) {
         bool headersValid = g_pPluginManager->headersValid() == HEADERS_OK;
         bool headers      = g_pPluginManager->updateHeaders(force);
         if (headers) {
-            const auto HLVER            = g_pPluginManager->getHyprlandVersion();
-            auto       GLOBALSTATE      = DataState::getGlobalState();
-            const auto COMPILEDOUTDATED = HLVER.hash != GLOBALSTATE.headersHashCompiled;
+            const auto               HLVER            = g_pPluginManager->getHyprlandVersion();
+            auto                     GLOBALSTATE      = DataState::getGlobalState();
+            const auto               COMPILEDOUTDATED = HLVER.hash != GLOBALSTATE.headersHashCompiled;
 
             std::vector<std::string> names{command.begin() + (command.size() > 0 ? 1 : 0), command.end()};
-            bool ret1 = g_pPluginManager->updatePlugins(names, !headersValid || force || COMPILEDOUTDATED);
+            bool                     ret1 = g_pPluginManager->updatePlugins(names, !headersValid || force || COMPILEDOUTDATED);
 
             if (!ret1)
                 return 1;

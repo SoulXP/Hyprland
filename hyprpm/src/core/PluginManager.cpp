@@ -564,27 +564,34 @@ bool CPluginManager::updatePlugins(const std::vector<std::string>& names, bool f
     }
 
     std::set<std::string_view> NOT_FOUND{names.begin(), names.end()};
-    const auto REPOS = DataState::getAllRepositories()
-        | std::views::filter([&names, &NOT_FOUND](const SPluginRepository& repo) {
-            std::string_view value{};
 
-            for (auto const& name : names) {
-                if (name == repo.name) { value = name; break; }
-                for (auto const& plugin : repo.plugins) {
-                    if (name == plugin.name) { value = plugin.name; break; }
-                }
+    const auto                 filterRepos = [&names, &NOT_FOUND](const SPluginRepository& repo) {
+        std::string_view value{};
+
+        for (auto const& name : names) {
+            if (name == repo.name) {
+                value = name;
+                break;
             }
 
-            if (value != "") NOT_FOUND.erase(value);
+            for (auto const& plugin : repo.plugins) {
+                if (name == plugin.name) {
+                    value = plugin.name;
+                    break;
+                }
+            }
+        }
 
-            return value != "" || names.size() == 0;
-        })
-        | std::ranges::to<std::vector>();
+        if (value != "")
+            NOT_FOUND.erase(value);
 
+        return value != "" || names.size() == 0;
+    };
+
+    const auto REPOS = DataState::getAllRepositories() | std::views::filter(filterRepos) | std::ranges::to<std::vector>();
 
     for (auto const& [i, missing] : NOT_FOUND | std::views::enumerate) {
-        std::cout << ((i == 0) ? "\n" : "")
-            << std::string{Colors::YELLOW} + "!" + Colors::RESET + " Repo \"" << missing << "\" is not installed.\n";
+        std::cout << ((i == 0) ? "\n" : "") << std::string{Colors::YELLOW} + "!" + Colors::RESET + " Repo \"" << missing << "\" is not installed.\n";
     }
 
     if (REPOS.size() < 1) {
